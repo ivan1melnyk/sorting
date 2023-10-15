@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+#FOLDER_PROCESS = input('Write path to the folder, where we will sort:')
 FOLDER_PROCESS = Path(r'C:\Users\User\Desktop\Мотлох')
 #FILE_DICT = {file.name: file.suffix for file in FOLDER_PROCESS.iterdir()}
 
@@ -52,7 +53,10 @@ def scan(folder: Path):
         if item.is_dir():
             if item.name not in ('images', 'archives', 'video', 'audio', 'documents', 'MY_OTHER'):
                 FOLDERS.append(item)
-                scan(item)
+                try:
+                    item.rmdir()
+                except:
+                    scan(item)
             continue
         extention = get_extension(item.name)   #беремо розширення
         full_name = folder / item.name         #беремо повний шлях до файлу
@@ -84,4 +88,5 @@ if __name__ == '__main__':
 
 
 
-
+#if not os.listdir(path): 
+#    os.rmdir()

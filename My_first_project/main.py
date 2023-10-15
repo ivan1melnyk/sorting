@@ -50,7 +50,3 @@ def main():
 if __name__ == '__main__':
     file_parser.scan(file_parser.FOLDER_PROCESS)
     main()
-
-
-
-        
