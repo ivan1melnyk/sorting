@@ -1,8 +1,8 @@
 import sys
 from pathlib import Path
 
-#FOLDER_PROCESS = input('Write path to the folder, where we will sort:')
-FOLDER_PROCESS = Path(r'C:\Users\User\Desktop\Мотлох')
+FOLDER_PROCESS = input('Write path to the folder, where we will sort:')
+#FOLDER_PROCESS = Path(r'C:\Users\User\Desktop\Мотлох')
 #FILE_DICT = {file.name: file.suffix for file in FOLDER_PROCESS.iterdir()}
 
 IMAGES = []
