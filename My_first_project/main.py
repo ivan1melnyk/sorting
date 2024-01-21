@@ -1,52 +1,54 @@
+import concurrent.futures
+import logging
+from random import randint
+from time import sleep
+
 from pathlib import Path
-import shutil
 import file_parser
 from normalize import normalize_file, normalize_archiv
 
+WAYS = [
+    file_parser.FOLDER_PROCESS / 'images',
+    file_parser.FOLDER_PROCESS / 'video',
+    file_parser.FOLDER_PROCESS / 'audio',
+    file_parser.FOLDER_PROCESS / 'documents',
+    file_parser.FOLDER_PROCESS / 'MY_OTHER',
+]
 
-def handle_file(file_name: Path, target_folder: Path):
-    target_folder.mkdir(exist_ok=True)
-    file_name.replace(target_folder / normalize_file(file_name))
+DESTINAITIONS = [
+    file_parser.IMAGES,
+    file_parser.VIDEO,
+    file_parser.AUDIO,
+    file_parser.DOCUMENTS,
+    file_parser.MY_OTHER,
+]
 
-def handle_archive(file_name: Path, target_folder: Path, archive_format):
-    target_folder.mkdir(exist_ok=True)
-    folder_for_file = target_folder / normalize_archiv(file_name.name.replace(file_name.suffix, ''))
-    folder_for_file.mkdir(exist_ok=True)
-    try:
-        if archive_format == 'gz':
-            archive_format = 'gztar'
-        shutil.unpack_archive(str(file_name.absolute()), str(folder_for_file.absolute()), archive_format)
-    except shutil.ReadError:
-        folder_for_file.rmdir()
-        return
-    file_name.unlink()
+# INDEX = 0
 
 
-#directory = Path(r'C:\Users\User\Desktop\Junk')
+def handle_file(INDEX):
+    way = WAYS[INDEX]
+    print(way.name)
+    for file_name in DESTINAITIONS[INDEX]:
+        way.mkdir(exist_ok=True)
+        file_name.replace(way / normalize_file(file_name))
+    INDEX += 1
 
-#file_list = [file for file in directory.iterdir()]
-'''
-IMAGES = ('JPEG', 'PNG', 'JPG', 'SVG')
-VIDEO = ('AVI', 'MP4', 'MOV', 'MKV')
-DOCUMENTS = ('DOC', 'DOCX', 'TXT', 'PDF', 'XLSX', 'PPTX')
-AUDIO = ('MP3', 'OGG', 'WAV', 'AMR')
-ARCHIVES = ('ZIP', 'GZ', 'TAR')
-'''
+
+# def handle_file(file_name: Path, target_folder: Path):
+#     target_folder.mkdir(exist_ok=True)
+#     file_name.replace(target_folder / normalize_file(file_name))
+
 
 def main():
-    for file in file_parser.IMAGES:  
-        handle_file(file, file_parser.FOLDER_PROCESS / 'images')
-    for file in file_parser.VIDEO:  
-        handle_file(file, file_parser.FOLDER_PROCESS / 'video')
-    for file in file_parser.AUDIO:  
-        handle_file(file, file_parser.FOLDER_PROCESS / 'audio')
-    for file in file_parser.DOCUMENTS:  
-        handle_file(file, file_parser.FOLDER_PROCESS / 'documents')
-    for file in file_parser.MY_OTHER:  
-        handle_file(file, file_parser.FOLDER_PROCESS / 'MY_OTHER')       
-    for file in file_parser.ARCHIVES:  
-        handle_archive(file, file_parser.FOLDER_PROCESS / 'archives', file.suffix[1:])
+    logging.basicConfig(level=logging.DEBUG,
+                        format='%(threadName)s %(message)s')
+    with concurrent.futures.ThreadPoolExecutor(max_workers=2) as executor:
+        results = list(executor.map(handle_file, range(5)))
+        logging.debug(results)
+
 
 if __name__ == '__main__':
     file_parser.scan(file_parser.FOLDER_PROCESS)
     main()
+    file_parser.del_empty_folders(file_parser.FOLDER_PROCESS)
