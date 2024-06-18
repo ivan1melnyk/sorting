@@ -1,4 +1,6 @@
+cd sorting_project
 
+python gui.py
 
-https://github.com/ivan1melnyk/sorting/assets/139176450/ebec3945-221f-4abc-ad0a-29cd63a2de5d
+https://github.com/ivan1melnyk/sorting/assets/139176450/1688900d-02e4-4a40-8ebf-20597c167fca
 
